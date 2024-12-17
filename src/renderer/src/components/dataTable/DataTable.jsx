@@ -49,102 +49,112 @@ const DataTable = () => {
 
   return (
     <div className="flex flex-col p-6">
-      <h1 className="font-medium text-xl mb-3">Orders</h1>
-      <div className="-m-1.5 overflow-x-auto">
-        <div className="p-1.5 min-w-full inline-block align-middle">
-          <div className="border rounded-lg shadow overflow-hidden dark:border-neutral-700 dark:shadow-gray-900">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-              <thead className="bg-gray-50 dark:bg-neutral-700">
+    <h1 className="font-semibold text-2xl mb-5 text-dark-700 dark:text-dark-400">Orders</h1>
+    <div className="overflow-x-auto">
+      <div className="min-w-full inline-block align-middle">
+        <div className="border border-blue-200 rounded-xl shadow-md overflow-hidden dark:border-blue-800">
+          <table className="min-w-full divide-y divide-blue-200 dark:divide-blue-800">
+            <thead className="bg-blue-100 dark:bg-blue-900">
+              <tr>
+                {[
+                  "Order ID",
+                  "Customer Name",
+                  "Phone",
+                  "Email",
+                  "Timestamp",
+                  "Total",
+                  "Sub Total",
+                  "Tax",
+                  "Items",
+                  "Qty",
+                  "Invoice",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    scope="col"
+                    className={`px-4 py-3 text-left text-sm font-semibold text-blue-800 uppercase dark:text-blue-300 ${
+                      header === "Invoice" ? "text-center" : ""
+                    }`}
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-blue-200 dark:divide-blue-800">
+              {loading ? (
                 <tr>
-                  {[
-                    'OrderID', 
-                    'Customer Name', 
-                    'Phone Number', 
-                    'Email', 
-                    'Order Timestamp', 
-                    'Total Amount', 
-                    'Sub Total', 
-                    'Tax Amount', 
-                    'Item Name', 
-                    'Quantity', 
-                    'Invoice'
-                  ].map((header) => (
-                    <th 
-                      key={header}
-                      scope="col" 
-                      className={`px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400 ${
-                        header === 'Invoice' ? 'text-end' : ''
-                      }`}
-                    >
-                      {header}
-                    </th>
-                  ))}
+                  <td
+                    colSpan={11}
+                    className="px-6 py-4 text-center text-blue-500 dark:text-blue-300"
+                  >
+                    Loading orders...
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                {loading ? (
-                  <tr>
-                    <td colSpan={11} className="px-6 py-4 text-center text-sm text-gray-800 dark:text-neutral-200">
-                      Loading orders...
+              ) : orders.length > 0 ? (
+                orders.map((order) => (
+                  <tr
+                    key={order.OrderID}
+                    className="hover:bg-blue-50 dark:hover:bg-blue-800 transition-all"
+                  >
+                    <td className="px-4 py-3 whitespace-nowrap text-blue-900 dark:text-blue-300">
+                      {order.OrderID}
+                    </td>
+                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                      {order.CustomerName}
+                    </td>
+                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                      {order.PhoneNumber}
+                    </td>
+                    <td className="px-4 py-3 truncate max-w-[120px] text-blue-800 dark:text-blue-300">
+                      {order.Email}
+                    </td>
+                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                      {order.OrderTimestamp}
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-blue-600 dark:text-blue-400">
+                      ${order.TotalAmount.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                      ${order.SubTotal.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                      ${order.TaxAmount.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                      {order.ItemNames}
+                    </td>
+                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                      {order.Quantities}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        onClick={() => generatePDF(order)}
+                        className="inline-flex items-center justify-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-700 transition"
+                      >
+                        Receipt
+                      </button>
                     </td>
                   </tr>
-                ) : orders.length > 0 ? (
-                  orders.map((order) => (
-                    <tr key={order.OrderID}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-                        {order.OrderID}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        {order.CustomerName}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        {order.PhoneNumber}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        {order.Email}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        {order.OrderTimestamp}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        ${order.TotalAmount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        ${order.SubTotal.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        ${order.TaxAmount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        {order.ItemNames}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                        {order.Quantities}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-end text-blue-600 font-bold hover:text-blue-800">
-                        <button
-                          type="button"
-                          onClick={() => generatePDF(order)}
-                          className="inline-flex items-center gap-x-2 px-3 py-1 border rounded-lg border-transparent bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 text-white"
-                        >
-                          Receipt
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={11} className="px-6 py-4 text-center text-sm text-gray-800 dark:text-neutral-200">
-                      No orders found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={11}
+                    className="px-6 py-4 text-center text-dark-500 dark:text-dark-300"
+                  >
+                    No orders found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
+  </div>
+  
+
   );
 };
 

@@ -74,40 +74,27 @@ const Dashboard = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Render metrics only if analyticsData is populated */}
-          <>
-            <MetricsCard 
-              icon={Users} 
-              label="Total Users" 
-              value={analyticsData.TotalUsers} // Accessing property directly
-              color="blue" 
-            />
-            <MetricsCard 
-              icon={IndianRupee} 
-              label="Total Revenue" 
-              value={`₹${analyticsData.TotalRevenue.toLocaleString()}`} // Format with commas
-              color="green" 
-            />
-            <MetricsCard 
-              icon={ShoppingCart} 
-              label="Total Orders" 
-              value={`${analyticsData.TotalOrders}`} // Accessing property directly
-              color="purple" 
-            />
-            <MetricsCard 
-              icon={Package} 
-              label="Products Sold" 
-              value={analyticsData.ProductsSold} // Accessing property directly
-              color="orange" 
-            />
-          </>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+ <>
+   <MetricsCard 
+     icon={IndianRupee} 
+     label="Total Revenue" 
+     value={`₹${analyticsData.TotalRevenue.toLocaleString()}`}
+     color="green" 
+   />
+   <MetricsCard 
+     icon={ShoppingCart} 
+     label="Total Orders" 
+     value={`${analyticsData.TotalOrders}`}
+     color="purple" 
+   />
+ </>
+</div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SalesChart data={salesData} />
           <RevenueChart data={revenueData} colors={COLORS} />
-        </div>
+        </div> */}
       </div>
     </div>
   );

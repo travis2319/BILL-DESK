@@ -59,7 +59,7 @@ const MenuTable = () => {
     if (menus.length === 0) {
       return (
         <tr>
-          <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-800 dark:text-neutral-200">
+          <td colSpan={5} className="px-6 py-4 text-center text-bold text-dark-800 dark:text-dark-500">
             No menu items found
           </td>
         </tr>
@@ -68,19 +68,19 @@ const MenuTable = () => {
 
     return menus.map((menu) => (
       <tr key={menu.ItemID}>
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-dark-800 dark:text-dark-800">
           {menu.ItemID}
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-800 dark:text-dark-800">
           {menu.ItemName}
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-800 dark:text-dark-800">
           {menu.Price.toFixed(2)}
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-800 dark:text-dark-800">
           {menu.Quantity}
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-800 dark:text-dark-800">
           {menu.IsAvailable ? 'Available' : 'Unavailable'}
         </td>
       </tr>
@@ -89,41 +89,42 @@ const MenuTable = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <MenuModal 
-        isOpen={isDialogOpen} 
-        onClose={() => setIsDialogOpen(false)} 
-        onAdd={handleAddMenuItem}
-      />
-      <div className="flex justify-between items-center p-6">
-        <h2 className="font-medium text-xl">Menu Items</h2>
-        <button 
-          onClick={() => setIsDialogOpen(true)} 
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
-        >
-          Add Menu Item
-        </button>
-      </div>
-      <div className="m-1.5 overflow-x-auto">
-        <div className="p-1.5 min-w-full inline-block align-middle">
-          <div className="border rounded-lg shadow overflow-hidden dark:border-neutral-700 dark:shadow-gray-900">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-              <thead className="bg-gray-50 dark:bg-neutral-700">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400">Menu ID</th>
-                  <th scope="col" className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400">Name</th>
-                  <th scope="col" className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400">Price</th>
-                  <th scope="col" className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400">Quantity</th>
-                  <th scope="col" className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-400">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                {renderTableContent()}
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <MenuModal 
+    isOpen={isDialogOpen} 
+    onClose={() => setIsDialogOpen(false)} 
+    onAdd={handleAddMenuItem}
+  />
+  <div className="flex justify-between items-center p-6 ">
+    <h2 className="font-semibold text-2xl text-dark-700 dark:text-dark-400">Menu Items</h2>
+    <button 
+      onClick={() => setIsDialogOpen(true)} 
+      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-700"
+    >
+      Add Menu Item
+    </button>
+  </div>
+  <div className="m-1.5 overflow-x-auto">
+    <div className="p-1.5 min-w-full inline-block align-middle">
+      <div className="border border-blue-200 rounded-xl shadow-md overflow-hidden dark:border-blue-700">
+        <table className="min-w-full divide-y divide-blue-200 dark:divide-blue-800">
+          <thead className="bg-blue-100 dark:bg-blue-900">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Menu ID</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Name</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Price</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Quantity</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-blue-200 dark:divide-blue-700">
+            {renderTableContent()}
+          </tbody>
+        </table>
       </div>
     </div>
+  </div>
+</div>
+
   );
 };
 
