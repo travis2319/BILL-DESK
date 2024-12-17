@@ -72,7 +72,7 @@ const DataTable = () => {
                   <th
                     key={header}
                     scope="col"
-                    className={`px-4 py-3 text-left text-sm font-semibold text-blue-800 uppercase dark:text-blue-300 ${
+                    className={`px-4 py-3 text-left text-sm font-semibold text-white uppercase dark:text-white ${
                       header === "Invoice" ? "text-center" : ""
                     }`}
                   >

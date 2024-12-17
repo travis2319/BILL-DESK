@@ -59,7 +59,7 @@ const MenuTable = () => {
     if (menus.length === 0) {
       return (
         <tr>
-          <td colSpan={5} className="px-6 py-4 text-center text-bold text-dark-800 dark:text-dark-500">
+          <td colSpan={5} className="px-6 py-4 text-center text-bold font-sm text-dark-800 dark:text-dark-500">
             No menu items found
           </td>
         </tr>
@@ -109,11 +109,11 @@ const MenuTable = () => {
         <table className="min-w-full divide-y divide-blue-200 dark:divide-blue-800">
           <thead className="bg-blue-100 dark:bg-blue-900">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Menu ID</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Name</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Price</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Quantity</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase dark:text-blue-300">Status</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase dark:text-white">Menu ID</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase dark:text-white">Name</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase dark:text-white">Price</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase dark:text-white">Quantity</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase dark:text-white">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-blue-200 dark:divide-blue-700">
