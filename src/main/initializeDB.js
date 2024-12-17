@@ -4,6 +4,7 @@ import { Orders } from './orders';
 import { Menu } from './menu';
 import { Customer } from './customer'
 import { OrderItems } from './orderItems';
+import { Analytics } from './analytics';
 
 export async function initializeDatabase(dbHandler){
     const auth = new Auth(dbHandler);
@@ -11,6 +12,8 @@ export async function initializeDatabase(dbHandler){
   const orderItems = new OrderItems(dbHandler)
   const menu = new Menu(dbHandler);
   const customer =  new Customer(dbHandler);
+  const analytics = new Analytics(dbHandler)
+
   try {
     // Call the method to create all necessary tables
     await auth.createTable();
@@ -18,6 +21,7 @@ export async function initializeDatabase(dbHandler){
     await orderItems.createTables();
     await menu.createTable();
     await customer.createTable();
+    await analytics.createViews();
     console.log("table created successfully");
     
   } catch (error) {

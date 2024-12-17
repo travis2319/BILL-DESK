@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Users, IndianRupee, ShoppingCart, Package, Plus } from 'lucide-react';
 import OrderModal from './OrderModel';
 import MetricsCard from './MetricsCard';
 import SalesChart from './SalesChart';
 import RevenueChart from './RevenueChart';
+// import { ipcRenderer } from 'electron'; // Import ipcRenderer
 
 const salesData = [
   { name: 'Jan', sales: 4000 },
@@ -21,15 +22,38 @@ const revenueData = [
 ];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-const metrics = [
-  { icon: Users, label: 'Total Users', value: '2,456', color: 'blue' },
-  { icon: IndianRupee, label: 'Total Revenue', value: '₹2,45,600', color: 'green' },
-  { icon: ShoppingCart, label: 'Total Orders', value: '1,234', color: 'purple' },
-  { icon: Package, label: 'Products Sold', value: '5,678', color: 'orange' },
-];
 
 const Dashboard = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
+  // Initialize analyticsData as an object with default values
+  const [analyticsData, setAnalyticsData] = useState({
+    TotalUsers: 1, // Set TotalUsers to 1 as per your requirement
+    TotalRevenue: 0,
+    TotalOrders: 0,
+    ProductsSold: 0,
+  });
+  
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const data = await window.electron.ipcRenderer.invoke('get-analytics');
+        console.log('Fetched analytics data:', data[0]);
+        
+        // Update the state with fetched data
+        setAnalyticsData({
+          TotalUsers: data[0].TotalCustomers || 0, // Always set to 1
+          TotalRevenue: data[0].TotalRevenue || 0, // Use fetched value or default to 0
+          TotalOrders: data[0].TotalOrders || 0,   // Use fetched value or default to 0
+          ProductsSold: data[0].ProductsSold || 0   // Use fetched value or default to 0
+        });
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
 
   return (
     <div className="w-full bg-gray-100 p-6">
@@ -51,9 +75,33 @@ const Dashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {metrics.map((metric, index) => (
-            <MetricsCard key={index} {...metric} />
-          ))}
+          {/* Render metrics only if analyticsData is populated */}
+          <>
+            <MetricsCard 
+              icon={Users} 
+              label="Total Users" 
+              value={analyticsData.TotalUsers} // Accessing property directly
+              color="blue" 
+            />
+            <MetricsCard 
+              icon={IndianRupee} 
+              label="Total Revenue" 
+              value={`₹${analyticsData.TotalRevenue.toLocaleString()}`} // Format with commas
+              color="green" 
+            />
+            <MetricsCard 
+              icon={ShoppingCart} 
+              label="Total Orders" 
+              value={`${analyticsData.TotalOrders}`} // Accessing property directly
+              color="purple" 
+            />
+            <MetricsCard 
+              icon={Package} 
+              label="Products Sold" 
+              value={analyticsData.ProductsSold} // Accessing property directly
+              color="orange" 
+            />
+          </>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

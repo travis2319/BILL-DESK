@@ -5,6 +5,7 @@ import { Orders } from './orders';
 import { Menu } from './menu';
 import { Customer } from './customer';
 import { OrderItems } from './orderItems';
+import { Analytics } from './analytics';
 
 export const handleIPC = (dbHandler) => {
   const auth = new Auth(dbHandler);
@@ -12,7 +13,8 @@ export const handleIPC = (dbHandler) => {
   const menu = new Menu(dbHandler);
   const customer = new Customer(dbHandler);
   const orderItems = new OrderItems(dbHandler)
-
+  const analytics = new Analytics(dbHandler);
+  
   ipcMain.handle('auth-create-user', async (_, username, email, password) => {
     try {
       await auth.createTable();
@@ -140,7 +142,17 @@ export const handleIPC = (dbHandler) => {
     }
   );
   
-  
+  ipcMain.handle('get-analytics', async () => {
+    try {
+      // Fetch the user order summary
+      await analytics.createViews();
+      const summary = await analytics.getUserOrderSummary();
+      return summary; // Return the summary data to the renderer process
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+      throw new Error('Failed to fetch analytics data'); // Propagate the error to the renderer
+    }
+  });
 
 
 
