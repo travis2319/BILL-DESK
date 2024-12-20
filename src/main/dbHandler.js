@@ -18,7 +18,7 @@ export class DBHandler {
     return new Promise((resolve, reject) => {
       this.db.run(query, params, (err) => {
         if (err) reject(err);
-        else resolve({ lastID: this.lastID });
+        resolve({ lastID: this.lastID, changes: this.changes });
       });
     });
   }

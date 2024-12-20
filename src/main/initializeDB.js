@@ -1,4 +1,4 @@
-import { DBHandler } from './dbHandler';
+// import { DBHandler } from './dbHandler';
 import { Auth } from './auth';
 import { Orders } from './orders';
 import { Menu } from './menu';

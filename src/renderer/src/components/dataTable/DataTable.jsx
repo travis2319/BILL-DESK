@@ -97,34 +97,34 @@ const DataTable = () => {
                     key={order.OrderID}
                     className="hover:bg-blue-50 dark:hover:bg-blue-800 transition-all"
                   >
-                    <td className="px-4 py-3 whitespace-nowrap text-blue-900 dark:text-blue-300">
+                    <td className="px-4 py-3 whitespace-nowrap text-black dark:text-black">
                       {order.OrderID}
                     </td>
-                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 text-black dark:text-black">
                       {order.CustomerName}
                     </td>
-                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 text-black dark:text-black">
                       {order.PhoneNumber}
                     </td>
-                    <td className="px-4 py-3 truncate max-w-[120px] text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 truncate max-w-[120px] text-black dark:text-black">
                       {order.Email}
                     </td>
-                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 text-black dark:text-black">
                       {order.OrderTimestamp}
                     </td>
-                    <td className="px-4 py-3 font-semibold text-blue-600 dark:text-blue-400">
+                    <td className="px-4 py-3 font-semibold text-black dark:text-black">
                       ${order.TotalAmount.toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 text-black dark:text-black">
                       ${order.SubTotal.toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 text-black dark:text-black">
                       ${order.TaxAmount.toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 text-black dark:text-black">
                       {order.ItemNames}
                     </td>
-                    <td className="px-4 py-3 text-blue-800 dark:text-blue-300">
+                    <td className="px-4 py-3 text-black dark:text-black">
                       {order.Quantities}
                     </td>
                     <td className="px-4 py-3 text-center">
