@@ -106,6 +106,25 @@ export const handleIPC = (dbHandler) => {
     }
   })
 
+  ipcMain.handle('update-menu-item', async (event, updatedItem) => {
+    try {
+      await menu.updatedItem(updateItem);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('delete-menu-item', async (event, itemId) => {
+    try {
+     await menu.deleteSingleItem(itemId);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+
   ipcMain.handle('handle-order',async (_,
       customerName,
       phoneNumber,

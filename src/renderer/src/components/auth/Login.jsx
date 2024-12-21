@@ -8,15 +8,15 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.log("event resize");
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     console.log("event resize");
       
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
+  //     window.dispatchEvent(new Event('resize'));
+  //   }, 100);
   
-    return () => clearTimeout(timeout);
-  }, []);
+  //   return () => clearTimeout(timeout);
+  // }, []);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;

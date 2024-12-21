@@ -12,14 +12,14 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.log("event resize");
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     console.log("event resize");
+  //     window.dispatchEvent(new Event('resize'));
+  //   }, 100);
   
-    return () => clearTimeout(timeout);
-  }, []);
+  //   return () => clearTimeout(timeout);
+  // }, []);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
