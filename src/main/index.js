@@ -19,12 +19,15 @@ function createWindow() {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      nodeIntegration: false,
+      contextIsolation: true,
     }
   })
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow.show();
+    mainWindow.focus();
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

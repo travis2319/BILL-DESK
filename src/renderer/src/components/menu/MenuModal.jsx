@@ -48,7 +48,7 @@ const MenuModal = ({ isOpen, onClose, onAdd }) => {
   };
 
   const resetForm = () => {
-    setItem({ ItemName: '', Price: 0, Quantity: 0, IsAvailable: true });
+    setItem({ ItemName: '', Price: 0, Quantity: 1, IsAvailable: true });
   };
 
   const handleClose = () => {

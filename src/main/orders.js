@@ -107,4 +107,49 @@ export class Orders {
       throw err;
     }
   }
+
+  async getOrder(orderId) {
+    const query = `
+      SELECT 
+        o.OrderID,
+        o.OrderTimestamp,
+        c.CustomerName,
+        c.Email AS CustomerEmail,
+        c.PhoneNumber,
+        oi.ItemName,
+        oi.Quantity,
+        m.Price AS ItemPrice
+      FROM Orders o
+      JOIN Customers c ON o.CustomerID = c.CustomerID
+      LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID
+      LEFT JOIN MenuItems m ON oi.ItemName = m.ItemName
+      WHERE o.OrderID = ?`;
+
+    try {
+      const rows = await this.dbHandler.all(query, [orderId]);
+
+      if (rows.length > 0) {
+        // Transform the result into a more structured format if necessary
+        const orderDetails = {
+          OrderID: rows[0].OrderID,
+          TimeStamp:rows[0].OrderTimestamp,
+          CustomerName: rows[0].CustomerName,
+          Email: rows[0].CustomerEmail,
+          PhoneNumber: rows[0].PhoneNumber,
+          Items: rows.map(row => ({
+            ItemName: row.ItemName,
+            ItemPrice: row.ItemPrice,
+            Quantity: row.Quantity,
+          })),
+        };
+
+        return orderDetails; // Return structured order details
+      } else {
+        throw new Error("Order not found");
+      }
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      throw error;
+    }
+  }
 }

@@ -66,6 +66,15 @@ export const handleIPC = (dbHandler) => {
     }
   });
 
+  ipcMain.handle('order-get-ById', async(_,orderID)=>{
+    try{
+      const order = await orders.getOrder(orderID);
+      return {success:true, order:order};
+    }catch(err){
+      return {success:false,error: err.message || err}
+    }
+  })
+
   ipcMain.handle('menu-create', async(_,ItemName,Price,Quantity,Status)=>{
     try{
 
@@ -154,6 +163,11 @@ export const handleIPC = (dbHandler) => {
     }
   });
 
-
+  ipcMain.on('rerender', (event) => {
+    const windows = BrowserWindow.getAllWindows();
+    if (windows.length > 0) {
+      windows[0].webContents.reload(); // Reloads the content
+    }
+  });
 
 };
