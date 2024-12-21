@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate,useLocation  } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoginData({ email: '', password: '' });
-    setError('');
+    const timeout = setTimeout(() => {
+      console.log("event resize");
+      
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+  
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleInputChange = (e) => {
@@ -40,6 +46,7 @@ const Login = () => {
       setLoading(false);
 
       if (userData.success) {
+            console.log('Route changed to:', location.pathname);
         navigate('/home');
       } else {
         setError(userData.message || 'Invalid email or password');

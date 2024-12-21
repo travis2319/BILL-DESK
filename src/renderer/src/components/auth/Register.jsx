@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate,useLocation } from 'react-router-dom';
 
 const Register = () => {
   const [userData, setUserData] = useState({
@@ -7,17 +7,18 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: ''
-  });
+  },);
   
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    setUserData({
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
-    });
+    const timeout = setTimeout(() => {
+      console.log("event resize");
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+  
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleInputChange = (e) => {
@@ -47,7 +48,7 @@ const Register = () => {
 
       console.log(result.message);
       alert(result.message);
-
+      console.log('Route changed to:', location.pathname);
       // Reset form and redirect after successful registration
       setUserData({
         name: '',
@@ -55,7 +56,7 @@ const Register = () => {
         password: '',
         confirmPassword: ''
       });
-      navigate('/', { replace: true }); // Redirect to login page
+      navigate('/'); // Redirect to login page
     } catch (err) {
       console.error('Error inserting data:', err);
       alert('Failed to insert data');

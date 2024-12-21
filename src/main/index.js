@@ -20,18 +20,19 @@ function createWindow() {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
-      nodeIntegration: false,
-      contextIsolation: true,
+      // nodeIntegration: false,
+      // contextIsolation: true,
     }
   })
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
-    mainWindow.focus();
+    // mainWindow.focus();
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
+    mainWindow.show();
     return { action: 'deny' }
   })
 

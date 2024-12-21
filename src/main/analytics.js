@@ -10,25 +10,21 @@ export class Analytics {
   // Creates views to summarize user orders
   async createViews() {
     const query = `
-      CREATE VIEW IF NOT EXISTS UserOrderSummary AS
-      SELECT
-      u.UserID,
-      u.username,
-      COUNT(o.OrderID) AS TotalOrders,
-      SUM(o.TotalAmount) AS TotalRevenue,
-      SUM(oi.Quantity) AS TotalProductsSold,
-      COUNT(DISTINCT o.CustomerID) AS TotalCustomers
-      FROM Users u
-      LEFT JOIN Orders o ON u.UserID = o.UserID
-      LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID
-      GROUP BY u.UserID, u.username;
+     CREATE VIEW IF NOT EXISTS OrderSummary AS
+  SELECT
+    COUNT(o.OrderID) AS TotalOrders,
+    SUM(o.TotalAmount) AS TotalRevenue,
+    SUM(oi.Quantity) AS TotalProductsSold,
+    COUNT(DISTINCT o.CustomerID) AS TotalCustomers
+  FROM Orders o
+  LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID;
     `;
     await this.dbHandler.run(query);
   }
 
   // Fetches the summarized user order data from the view
   async getUserOrderSummary() {
-    const query = 'SELECT * FROM UserOrderSummary';
+    const query = 'SELECT * FROM OrderSummary';
     return await this.dbHandler.all(query);
   }
 }

@@ -43,11 +43,11 @@ export const handleIPC = (dbHandler) => {
     }
   });
 
-  ipcMain.handle('order-create', async (_,  userID, orderTimestamp, totalAmount, subTotal, taxAmount, items ) => {
+  ipcMain.handle('order-create', async (_,  userID, orderTimestamp, totalAmount, subTotal, taxAmount,taxRate, items ) => {
     try {
       await orders.createTables();
       // console.log(items);
-      console.log(userID, orderTimestamp, totalAmount, subTotal, taxAmount, items );
+      console.log(userID, orderTimestamp, totalAmount, subTotal, taxAmount, items,taxRate );
       
       await orders.createOrder(userID, orderTimestamp, totalAmount, subTotal, taxAmount, items);
       return { success: true, message: 'Order and items created successfully' };
@@ -115,6 +115,7 @@ export const handleIPC = (dbHandler) => {
       totalAmount,
       subTotal,
       taxAmount,
+      taxRate,
       items
     ) => {
       try {
@@ -137,7 +138,8 @@ export const handleIPC = (dbHandler) => {
           orderTimestamp,
           totalAmount,
           subTotal,
-          taxAmount
+          taxAmount,
+          taxRate
         );
   
         // Create order items using OrderItems class
@@ -156,6 +158,8 @@ export const handleIPC = (dbHandler) => {
       // Fetch the user order summary
       await analytics.createViews();
       const summary = await analytics.getUserOrderSummary();
+      console.log(summary);
+      
       return summary; // Return the summary data to the renderer process
     } catch (error) {
       console.error('Error fetching analytics:', error);
@@ -163,11 +167,10 @@ export const handleIPC = (dbHandler) => {
     }
   });
 
-  ipcMain.on('rerender', (event) => {
-    const windows = BrowserWindow.getAllWindows();
-    if (windows.length > 0) {
-      windows[0].webContents.reload(); // Reloads the content
+  ipcMain.on('route-changed', (event, pathname) => {
+    console.log(`Route changed to: ${pathname}`);
+    if (mainWindow) {
+      mainWindow.reload(); // Reload the BrowserWindow
     }
   });
-
 };

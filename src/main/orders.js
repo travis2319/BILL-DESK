@@ -1,7 +1,7 @@
 import { DBHandler } from "./dbHandler";
 
 export class Orders {
-   dbHandler;
+  dbHandler;
 
   constructor(dbHandler) {
     this.dbHandler = dbHandler;
@@ -17,6 +17,7 @@ export class Orders {
         TotalAmount DECIMAL(10,2),
         SubTotal DECIMAL(10,2),
         TaxAmount DECIMAL(10,2),
+        TaxRate DECIMAL(10,2),
         FOREIGN KEY (UserID) REFERENCES Users(UserID),
         FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId)
       );
@@ -35,11 +36,12 @@ export class Orders {
     orderTimestamp,
     totalAmount,
     subTotal,
-    taxAmount
+    taxAmount,
+    taxRate // Added taxRate parameter
   ) {
     const insertOrderQuery = `
-      INSERT INTO Orders (UserID, CustomerId, OrderTimestamp, TotalAmount, SubTotal, TaxAmount)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO Orders (UserID, CustomerId, OrderTimestamp, TotalAmount, SubTotal, TaxAmount, TaxRate)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     try {
@@ -51,9 +53,10 @@ export class Orders {
         totalAmount,
         subTotal,
         taxAmount,
+        taxRate // Correctly passing taxRate
       ]);
 
-      // Manually fetch the last inserted order ID
+      // Fetch the last inserted order ID
       const fetchOrderIDQuery = `
         SELECT OrderID 
         FROM Orders
@@ -81,23 +84,22 @@ export class Orders {
   async getAllOrders() {
     const query = `
       SELECT 
-      o.OrderID, 
-      c.CustomerID,
-      c.CustomerName,
-      c.PhoneNumber,
-      c.Email,
-      o.UserID,
-      o.OrderTimestamp, 
-      o.TotalAmount, 
-      o.SubTotal, 
-      o.TaxAmount, 
-      group_concat(oi.ItemName, ', ') AS ItemNames,
-      group_concat(oi.Quantity, ', ') AS Quantities
+        o.OrderID, 
+        c.CustomerID,
+        c.CustomerName,
+        c.PhoneNumber,
+        c.Email,
+        o.UserID,
+        o.OrderTimestamp, 
+        o.TotalAmount, 
+        o.SubTotal, 
+        o.TaxAmount, 
+        group_concat(oi.ItemName, ', ') AS ItemNames,
+        group_concat(oi.Quantity, ', ') AS Quantities
       FROM Orders o
       JOIN Customers c ON o.CustomerId = c.CustomerID
-      JOIN OrderItems oi ON o.OrderID = oi.OrderID
-      GROUP BY o.OrderID, c.CustomerID, c.CustomerName, c.PhoneNumber, c.Email, 
-      o.UserID, o.OrderTimestamp, o.TotalAmount, o.SubTotal, o.TaxAmount
+      LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID
+      GROUP BY o.OrderID, c.CustomerID
       ORDER BY o.OrderID DESC;
     `;
     try {
@@ -113,6 +115,7 @@ export class Orders {
       SELECT 
         o.OrderID,
         o.OrderTimestamp,
+        o.TaxRate,
         c.CustomerName,
         c.Email AS CustomerEmail,
         c.PhoneNumber,
@@ -120,7 +123,7 @@ export class Orders {
         oi.Quantity,
         m.Price AS ItemPrice
       FROM Orders o
-      JOIN Customers c ON o.CustomerID = c.CustomerID
+      JOIN Customers c ON o.CustomerId = c.CustomerID
       LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID
       LEFT JOIN MenuItems m ON oi.ItemName = m.ItemName
       WHERE o.OrderID = ?`;
@@ -132,14 +135,15 @@ export class Orders {
         // Transform the result into a more structured format if necessary
         const orderDetails = {
           OrderID: rows[0].OrderID,
-          TimeStamp:rows[0].OrderTimestamp,
+          TimeStamp: rows[0].OrderTimestamp,
+          TaxRate: rows[0].TaxRate,
           CustomerName: rows[0].CustomerName,
           Email: rows[0].CustomerEmail,
           PhoneNumber: rows[0].PhoneNumber,
           Items: rows.map(row => ({
-            ItemName: row.ItemName,
-            ItemPrice: row.ItemPrice,
-            Quantity: row.Quantity,
+            ItemName: row.ItemName || 'N/A', // Handle missing item names gracefully
+            ItemPrice: row.ItemPrice || 0.00, // Default price if not found
+            Quantity: row.Quantity || 0 // Default quantity if not found
           })),
         };
 

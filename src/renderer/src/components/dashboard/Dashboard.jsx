@@ -45,9 +45,9 @@ const Dashboard = () => {
         console.log('Fetched analytics data:', data[0]);
         
         setAnalyticsData({
-          TotalUsers: data[0].TotalCustomers || 0,
+          TotalUsers: data[0].TotalOrders || 0,
           TotalRevenue: data[0].TotalRevenue || 0,
-          TotalOrders: data[0].TotalOrders || 0,
+          TotalOrders: data[0].TotalCustomers || 0,
           ProductsSold: data[0].ProductsSold || 0
         });
       } catch (error) {
@@ -71,27 +71,6 @@ const Dashboard = () => {
       <div className="container mx-auto ">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-extrabold text-gray-800">Dashboard</h1>
-          {/* Editable GST Display */}
-        <div className="mb-6">
-          {isGstEditing ? (
-            <input
-              type="number"
-              value={gst}
-              onChange={(e) => setGst(Number(e.target.value))}
-              onBlur={() => setIsGstEditing(false)} // Hide input on blur
-              className="border border-gray-300 rounded-md p-2 w-full"
-              placeholder="Enter GST percentage"
-            />
-          ) : (
-            <div 
-              onClick={() => setIsGstEditing(true)} // Show input on click
-              className="cursor-pointer text-gray-700 hover:text-blue-500"
-            >
-              GST (%): {gst}%
-            </div>
-          )}
-        </div>
-            
           <button 
             onClick={() => setIsDialogOpen(true)}
             className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"

@@ -3,7 +3,8 @@ import {
   Cuboid,
   Home,
   LayoutList,
-  LogOut
+  LogOut,
+  Settings 
 } from 'lucide-react';
 import { Link } from 'react-router';
 
@@ -24,6 +25,10 @@ const Sidebar = () => {
             <LayoutList size={20} />
             <span>Menu Items</span>
           </Link>
+          {/* <Link to="/settings" className="flex items-center space-x-2">
+            <Settings  size={20} />
+            <span>Settings</span>
+          </Link> */}
           <Link to="/" className="flex items-center space-x-2">
             <LogOut size={20} />
             <span>Logout</span>
