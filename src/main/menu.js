@@ -35,12 +35,12 @@ export class Menu {
         return await this.dbHandler.all(query);
     }
 
-    async deleteMenuItem(ItemID) {
+    async deleteItem(ItemID) {
         const query = 'DELETE FROM MenuItems WHERE ItemID = ?';
         return await this.dbHandler.run(query, [ItemID]);
     }
 
-    async updateMenuField(ItemID, field, value) {
+    async updateMenuField(ItemID, ItemName, Price,Quantity,IsAvailable) {
         // Validate field name to prevent SQL injection
         const validFields = ['ItemName', 'Price', 'Quantity', 'IsAvailable'];
         if (!validFields.includes(field)) {

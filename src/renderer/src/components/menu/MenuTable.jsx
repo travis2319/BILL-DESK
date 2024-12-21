@@ -129,6 +129,7 @@
 // };
 
 // export default MenuTable;
+
 import React, { useState, useEffect } from "react";
 import MenuModal from './MenuModal';
 
@@ -139,27 +140,28 @@ const MenuTable = () => {
   const [error, setError] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
 
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const response = await window.electron.ipcRenderer.invoke("get-all-menu");
-        if (response.success) {
-          setMenus(response.MenuItems);
-          setError(null);
-        } else {
-          setError(response.error || "Failed to fetch menu items");
-          console.error("Failed to fetch menu items:", response.error);
-        }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : String(err);
-        setError(errorMessage);
-        console.error("Error fetching menu items:", errorMessage);
-      } finally {
-        setLoading(false);
+  const fetchMenuItems = async () => {
+    setLoading(true);
+    try {
+      const response = await window.electron.ipcRenderer.invoke("get-all-menu");
+      if (response.success) {
+        setMenus(response.MenuItems);
+        setError(null);
+      } else {
+        setError(response.error || "Failed to fetch menu items");
+        console.error("Failed to fetch menu items:", response.error);
       }
-    };
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage);
+      console.error("Error fetching menu items:", errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchMenu();
+  useEffect(() => {
+    fetchMenuItems();
   }, []);
 
   const handleUpdateField = async (itemId, field, value) => {
@@ -190,16 +192,17 @@ const MenuTable = () => {
     }
   };
 
-  const handleAddMenuItem = (newItem) => {
+  const handleAddMenuItem = async (newItem) => {
     setMenus((prevMenus) => [...prevMenus, newItem]);
     setIsDialogOpen(false);
+    await fetchMenuItems(); // Refresh the list after adding
   };
 
   const handleDeleteMenuItem = async (itemId) => {
     try {
       const response = await window.electron.ipcRenderer.invoke("delete-menu-item", itemId);
       if (response.success) {
-        setMenus((prevMenus) => prevMenus.filter(menu => menu.ItemID !== itemId));
+        await fetchMenuItems(); // Refresh the menu items after successful deletion
         setError(null);
       } else {
         setError(response.error || "Failed to delete menu item");
@@ -235,6 +238,7 @@ const MenuTable = () => {
       
       setIsDialogOpen(false);
       setEditingItem(null);
+      await fetchMenuItems(); // Refresh the list after editing
     } catch (err) {
       console.error("Error during update:", err);
       setError("Failed to update one or more fields");
@@ -307,6 +311,7 @@ const MenuTable = () => {
     ));
   };
 
+  // Rest of the component remains the same...
   return (
     <div className="flex flex-col h-screen">
       <MenuModal 

@@ -108,16 +108,16 @@ export const handleIPC = (dbHandler) => {
 
   ipcMain.handle('update-menu-item', async (event, updatedItem) => {
     try {
-      await menu.updatedItem(updateItem);
+      await menu.updatedItem(ItemID, field, value);
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
     }
   });
 
-  ipcMain.handle('delete-menu-item', async (event, itemId) => {
+  ipcMain.handle('delete-menu-item', async (_, itemId) => {
     try {
-     await menu.deleteSingleItem(itemId);
+     await menu.deleteItem(itemId);
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
