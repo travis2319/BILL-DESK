@@ -8,18 +8,20 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   },);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
   
   const navigate = useNavigate();
   const location = useLocation();
 
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     console.log("event resize");
-  //     window.dispatchEvent(new Event('resize'));
-  //   }, 100);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      console.log("event resize");
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
   
-  //   return () => clearTimeout(timeout);
-  // }, []);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -47,16 +49,14 @@ const Register = () => {
       );
 
       console.log(result.message);
-      alert(result.message);
-      console.log('Route changed to:', location.pathname);
-      // Reset form and redirect after successful registration
+      setPopupMessage(result.message);
+      setShowPopup(true);
       setUserData({
         name: '',
         email: '',
         password: '',
         confirmPassword: ''
       });
-      navigate('/'); // Redirect to login page
     } catch (err) {
       console.error('Error inserting data:', err);
       alert('Failed to insert data');
@@ -67,6 +67,14 @@ const Register = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-300">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center mb-6">Register</h1>
+        {showPopup && (
+          <div className="bg-green-200 text-green-800 p-4 rounded mb-4 text-center">
+            {popupMessage}
+            <p className="mt-2">
+              You can now <Link to="/" className="text-blue-500 hover:underline">login</Link> if you wish.
+            </p>
+          </div>
+        )}
         <form onSubmit={handleUserData}>
           <div className="mb-4">
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">

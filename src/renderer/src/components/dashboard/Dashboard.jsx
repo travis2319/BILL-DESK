@@ -28,15 +28,11 @@ const Dashboard = () => {
   
   // Initialize analyticsData as an object with default values
   const [analyticsData, setAnalyticsData] = useState({
-    TotalUsers: 1,
+    TotalUsers: 0,
     TotalRevenue: 0,
     TotalOrders: 0,
     ProductsSold: 0,
   });
-
-  // State for GST and its visibility
-  const [gst, setGst] = useState(0);
-  const [isGstEditing, setIsGstEditing] = useState(false);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -52,7 +48,7 @@ const Dashboard = () => {
         });
       } catch (error) {
         console.error('Error fetching analytics:', error);
-      }
+      } 
     };
 
     fetchAnalytics();
@@ -65,6 +61,7 @@ const Dashboard = () => {
       <OrderModal 
         isOpen={isDialogOpen} 
         onClose={() => setIsDialogOpen(false)} 
+        key={isDialogOpen ? 'open' : 'closed'}
       />
 
       <div className="container mx-auto ">

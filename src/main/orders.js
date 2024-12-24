@@ -115,6 +115,8 @@ export class Orders {
       SELECT 
         o.OrderID,
         o.OrderTimestamp,
+        o.TotalAmount,
+        o.SubTotal,
         o.TaxRate,
         c.CustomerName,
         c.Email AS CustomerEmail,
@@ -136,6 +138,8 @@ export class Orders {
         const orderDetails = {
           OrderID: rows[0].OrderID,
           TimeStamp: rows[0].OrderTimestamp,
+          TotalAmount: rows[0].TotalAmount,
+          SubTotal: rows[0].SubTotal,
           TaxRate: rows[0].TaxRate,
           CustomerName: rows[0].CustomerName,
           Email: rows[0].CustomerEmail,

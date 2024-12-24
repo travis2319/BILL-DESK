@@ -75,6 +75,15 @@ export const handleIPC = (dbHandler) => {
     }
   })
 
+  ipcMain.handle('get-multiple-orders', async(_,orderID)=>{
+    try{
+
+      return {success:true,orders:orders}
+    }catch(err){
+      return {success:false,error:err}
+    }
+  })
+
   ipcMain.handle('menu-create', async(_,ItemName,Price,Quantity,Status)=>{
     try{
 
