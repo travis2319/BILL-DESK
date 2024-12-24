@@ -106,6 +106,33 @@ export const handleIPC = (dbHandler) => {
     }
   })
 
+  ipcMain.handle("update-menu-field", async (event, { menuId, field, value }) => {
+    try {
+      // Validate inputs
+      if (!menuId || !field) {
+        throw new Error("Menu ID and field are required.");
+      }
+  
+      // Update the menu item using the appropriate function
+      await menu.updateMenuField(menuId, field, value);
+  
+      return { success: true }; // Return success response
+    } catch (error) {
+      console.error("Error updating menu item:", error);
+      return { success: false, error: error.message }; // Return error response
+    }
+  });
+
+  ipcMain.handle('delete-menu-item', async (_, itemId) => {
+    try {
+     await menu.deleteItem(itemId);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+
   ipcMain.handle('handle-order',async (_,
       customerName,
       phoneNumber,

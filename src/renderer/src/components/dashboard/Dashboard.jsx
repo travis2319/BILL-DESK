@@ -45,9 +45,9 @@ const Dashboard = () => {
         console.log('Fetched analytics data:', data[0]);
         
         setAnalyticsData({
-          TotalUsers: data[0].TotalOrders || 0,
+          TotalUsers: data[0].TotalCustomers || 0,
           TotalRevenue: data[0].TotalRevenue || 0,
-          TotalOrders: data[0].TotalCustomers || 0,
+          TotalOrders: data[0].TotalOrders || 0,
           ProductsSold: data[0].ProductsSold || 0
         });
       } catch (error) {
@@ -59,7 +59,6 @@ const Dashboard = () => {
   }, []);
 
   // Calculate total revenue including GST
-  const totalRevenueWithGst = analyticsData.TotalRevenue + (analyticsData.TotalRevenue * (gst / 100));
 
   return (
     <div className="w-full bg-gray-100 p-6">
@@ -85,7 +84,7 @@ const Dashboard = () => {
             <MetricsCard 
               icon={IndianRupee} 
               label="Total Revenue" 
-              value={`₹${totalRevenueWithGst.toLocaleString()}`}
+              value={`₹${analyticsData.TotalRevenue}`}
               color="green" 
             />
             <MetricsCard 
