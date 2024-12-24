@@ -5,6 +5,10 @@ const DataTable = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Set how many items you want per page
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -30,11 +34,8 @@ const DataTable = () => {
   // Function to handle receipt generation
   const handleGeneratePDF = async (orderID) => {
     try {
-      // Fetch order details for the specific order ID
       const response = await window.electron.ipcRenderer.invoke("order-get-ById", orderID);
-      console.log(response);
       if (response.success && response.order) {
-        // Call generatePDF with the fetched order details
         await generatePDF(response.order);
       } else {
         console.error(response.error || "Failed to fetch order details for PDF generation");
@@ -43,6 +44,14 @@ const DataTable = () => {
       console.error("Error fetching order details for PDF:", error);
     }
   };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(orders.length / itemsPerPage);
+
+  // Get current orders for the page
+  const indexOfLastOrder = currentPage * itemsPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
   // Render error state if applicable
   if (error) {
@@ -99,52 +108,26 @@ const DataTable = () => {
               <tbody className="divide-y divide-blue-200 dark:divide-blue-800">
                 {loading ? (
                   <tr>
-                    <td
-                      colSpan={11}
-                      className="px-6 py-4 text-center text-blue-500 dark:text-blue-300"
-                    >
+                    <td colSpan={11} className="px-6 py-4 text-center text-blue-500 dark:text-blue-300">
                       Loading orders...
                     </td>
                   </tr>
-                ) : orders.length > 0 ? (
-                  orders.map((order) => (
-                    <tr
-                      key={order.OrderID}
-                      className="hover:bg-blue-50 dark:hover:bg-blue-300 transition-all"
-                    >
-                      <td className="px-4 py-3 whitespace-nowrap text-black dark:text-black">
-                        {order.OrderID}
-                      </td>
-                      <td className="px-4 py-3 text-black dark:text-black">
-                        {order.CustomerName}
-                      </td>
-                      <td className="px-4 py-3 text-black dark:text-black">
-                        {order.PhoneNumber}
-                      </td>
-                      <td className="px-4 py-3 truncate max-w-[120px] text-black dark:text-black">
-                        {order.Email}
-                      </td>
-                      <td className="px-4 py-3 text-black dark:text-black">
-                        {order.OrderTimestamp}
-                      </td>
-                      <td className="px-4 py-3 font-semibold text-black dark:text-black">
-                        {order.TotalAmount.toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3 text-black dark:text-black">
-                        {order.SubTotal.toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3 text-black dark:text-black">
-                        {order.TaxAmount.toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3 text-black dark:text-black">
-                        {order.ItemNames}
-                      </td>
-                      <td className="px-4 py-3 text-black dark:text-black">
-                        {order.Quantities}
-                      </td>
+                ) : currentOrders.length > 0 ? (
+                  currentOrders.map((order) => (
+                    <tr key={order.OrderID} className="hover:bg-blue-50 dark:hover:bg-blue-300 transition-all">
+                      <td className="px-4 py-3 whitespace-nowrap text-black dark:text-black">{order.OrderID}</td>
+                      <td className="px-4 py-3 text-black dark:text-black">{order.CustomerName}</td>
+                      <td className="px-4 py-3 text-black dark:text-black">{order.PhoneNumber}</td>
+                      <td className="px-4 py-3 truncate max-w-[120px] text-black dark:text-black">{order.Email}</td>
+                      <td className="px-4 py-3 text-black dark:text-black">{order.OrderTimestamp}</td>
+                      <td className="px-4 py-3 font-semibold text-black dark:text-black">{order.TotalAmount.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-black dark:text-black">{order.SubTotal.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-black dark:text-black">{order.TaxAmount.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-black dark:text-black">{order.ItemNames}</td>
+                      <td className="px-4 py-3 text-black dark:text-black">{order.Quantities}</td>
                       <td className="px-4 py-3 text-center">
                         <button
-                          onClick={() => handleGeneratePDF(order.OrderID)} // Call the new function here
+                          onClick={() => handleGeneratePDF(order.OrderID)}
                           className="inline-flex items-center justify-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-700 transition"
                         >
                           Receipt
@@ -154,16 +137,45 @@ const DataTable = () => {
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan={11}
-                      className="px-6 py-4 text-center text-dark-500 dark:text-dark-300"
-                    >
+                    <td colSpan={11} className="px-6 py-4 text-center text-dark-500 dark:text-dark-300">
                       No orders found.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-between p-4">
+                <button 
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+                >
+                  Previous
+                </button>
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <button 
+                    key={index + 1} 
+                    onClick={() => setCurrentPage(index + 1)} 
+                    className={`mx-1 px-3 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-600' : 'bg-gray-500 hover:bg-gray-400'} text-white`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button 
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -172,4 +184,3 @@ const DataTable = () => {
 };
 
 export default DataTable;
-

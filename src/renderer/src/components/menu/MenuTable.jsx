@@ -311,7 +311,6 @@ const MenuTable = () => {
     ));
   };
 
-  // Rest of the component remains the same...
   return (
     <div className="flex flex-col h-screen">
       <MenuModal 

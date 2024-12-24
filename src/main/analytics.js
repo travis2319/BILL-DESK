@@ -24,7 +24,8 @@ export class Analytics {
 
   // Fetches the summarized user order data from the view
   async getUserOrderSummary() {
-    const query = 'SELECT * FROM OrderSummary';
+    const query = 'SELECT SUM(TotalAmount) AS TotalRevenue,COUNT(OrderID) AS TotalOrders from Orders;';
     return await this.dbHandler.all(query);
   }
 }
+

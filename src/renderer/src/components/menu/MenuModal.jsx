@@ -1,19 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 
-const MenuModal = ({ isOpen, onClose, onAdd }) => {
-  // State to manage a single menu item
+const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
   const [item, setItem] = useState({
     ItemName: '',
     Price: 0,
     Quantity: 1,
     IsAvailable: true,
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddMenuItem = async () => {
+  // Populate the form when editingItem is provided
+  useEffect(() => {
+    if (editingItem) {
+      setItem({
+        ItemName: editingItem.menuName || '',
+        Price: editingItem.price || 0,
+        Quantity: editingItem.quantity || 1,
+        IsAvailable: editingItem.isAvailable ?? true,
+      });
+    } else {
+      resetForm(); // Reset if not editing
+    }
+  }, [editingItem]);
+
+  const handleSubmit = async () => {
     setIsLoading(true);
+
     try {
       // Validate numeric inputs
       if (isNaN(item.Price) || isNaN(item.Quantity)) {
@@ -21,27 +35,32 @@ const MenuModal = ({ isOpen, onClose, onAdd }) => {
         return;
       }
 
-
-      const response = await window.electron.ipcRenderer.invoke('menu-create',  item.ItemName, 
-        item.Price, 
-        item.Quantity, 
-        item.IsAvailable);
-      console.log("Response from IPC:", response); // Log response
-      
-      if (response.success) {
-        onAdd({
-          ...item,
-          ItemID: response.ItemID // Assuming the backend returns the new item's ID
+      if (editingItem) {
+        // Editing existing item
+        await onEdit({
+          menuId: editingItem.menuId,
+          menuName: item.ItemName,
+          price: item.Price,
+          quantity: item.Quantity,
+          isAvailable: item.IsAvailable,
         });
-
-        // Reset form
-        resetForm();
       } else {
-        alert(response.error || 'Failed to add menu item');
+        // Adding new item
+        const response = await window.electron.ipcRenderer.invoke('menu-create', item.ItemName, item.Price, item.Quantity, item.IsAvailable);
+        
+        if (response.success) {
+          onAdd({
+            ...item,
+            ItemID: response.ItemID, // Assuming the backend returns the new item's ID
+          });
+          resetForm();
+        } else {
+          alert(response.error || 'Failed to add menu item');
+        }
       }
     } catch (error) {
-      console.error('Error adding menu item:', error);
-      alert('An unexpected error occurred while adding the menu item');
+      console.error('Error submitting menu item:', error);
+      alert('An unexpected error occurred while submitting the menu item');
     } finally {
       setIsLoading(false);
     }
@@ -51,25 +70,25 @@ const MenuModal = ({ isOpen, onClose, onAdd }) => {
     setItem({ ItemName: '', Price: 0, Quantity: 1, IsAvailable: true });
   };
 
+  const handleInputChange = (field, value) => {
+    setItem(prevItem => ({ ...prevItem, [field]: value }));
+  };
+
   const handleClose = () => {
     resetForm();
     onClose();
   };
 
-  const handleInputChange = (field, value) => {
-    setItem(prevItem => ({ ...prevItem, [field]: value }));
-  };
-
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onRequestClose={handleClose} 
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={handleClose}
       ariaHideApp={false}
       className="fixed inset-0 flex items-center justify-center p-4 bg-black bg-opacity-50"
       overlayClassName="fixed inset-0 bg-black bg-opacity-50"
     >
       <div className="bg-white p-6 rounded-xl shadow-md max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4">Add Menu Item</h2>
+        <h2 className="text-2xl font-bold mb-4">{editingItem ? 'Edit Menu Item' : 'Add Menu Item'}</h2>
 
         <div className="space-y-4">
           <div>
@@ -132,11 +151,11 @@ const MenuModal = ({ isOpen, onClose, onAdd }) => {
 
           <div className="flex space-x-4">
             <button
-              onClick={handleAddMenuItem}
+              onClick={handleSubmit}
               className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
-              {isLoading ? 'Adding...' : 'Add Item'}
+              {isLoading ? (editingItem ? 'Saving...' : 'Adding...') : (editingItem ? 'Save Changes' : 'Add Item')}
             </button>
           </div>
         </div>

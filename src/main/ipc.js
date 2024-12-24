@@ -106,12 +106,20 @@ export const handleIPC = (dbHandler) => {
     }
   })
 
-  ipcMain.handle('update-menu-item', async (event, updatedItem) => {
+  ipcMain.handle("update-menu-field", async (event, { menuId, field, value }) => {
     try {
-      await menu.updatedItem(ItemID, field, value);
-      return { success: true };
+      // Validate inputs
+      if (!menuId || !field) {
+        throw new Error("Menu ID and field are required.");
+      }
+  
+      // Update the menu item using the appropriate function
+      await menu.updateMenuField(menuId, field, value);
+  
+      return { success: true }; // Return success response
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error("Error updating menu item:", error);
+      return { success: false, error: error.message }; // Return error response
     }
   });
 
