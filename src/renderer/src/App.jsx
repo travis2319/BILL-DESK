@@ -11,8 +11,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-         <Route path='/' element={<Login  key="login"/>}/>
-         <Route path='/register' element={<Register  key="register"/>}/>
+         <Route path='/' element={<Login/>}/>
+         <Route path='/register' element={<Register/>}/>
          <Route path="/home" element={<Home/>} />
          <Route path="/logs" element={<Logs />} />
          <Route path="/menu" element={<MenuItems />} />
@@ -23,13 +23,3 @@ const App = () => {
 }
 
 export default App
-
-// import React from 'react'
-
-// const App = () => {
-//   return (
-//     <div className='text-green-800 font-bold'>App</div>
-//   )
-// }
-
-// export default App
