@@ -15,19 +15,19 @@ export class Menu {
             ItemName TEXT NOT NULL,
             Price INTEGER NOT NULL,
             Quantity INTEGER NOT NULL,
-            IsAvailable BOOLEAN DEFAULT TRUE
+            QuantityType TEXT NOT NULL
           );
         `;
         await this.dbHandler.run(query);
     }
 
     // Insert a new menu item into the table
-    async createMenu(ItemName, Price, Quantity, IsAvailable) {
+    async createMenu(ItemName, Price, Quantity, QuantityType) {
         const query = `
-            INSERT INTO MenuItems (ItemName, Price, Quantity, IsAvailable) 
+            INSERT INTO MenuItems (ItemName, Price, Quantity, QuantityType) 
             VALUES (?, ?, ?, ?)
         `;
-        await this.dbHandler.run(query, [ItemName, Price, Quantity, IsAvailable]);
+        await this.dbHandler.run(query, [ItemName, Price, Quantity, QuantityType]);
     }
 
     // Fetch all menu items
@@ -38,7 +38,7 @@ export class Menu {
 
     // Fetch only menu names and prices
     async getMenuNames() {
-        const query = 'SELECT ItemName, Price FROM MenuItems;';
+        const query = 'SELECT ItemName, Price, Quantity, QuantityType FROM MenuItems;';
         return await this.dbHandler.all(query);
     }
 
@@ -66,16 +66,16 @@ export class Menu {
     }
 
     // Optional: Update all fields for a specific menu item
-    async updateMenuItem(ItemID, ItemName, Price, Quantity, IsAvailable) {
+    async updateMenuItem(ItemID, ItemName, Price, Quantity, QuantityType) {
         const query = `
             UPDATE MenuItems 
             SET ItemName = ?, 
                 Price = ?, 
                 Quantity = ?, 
-                IsAvailable = ?
+                QuantityType = ?
             WHERE ItemID = ?
         `;
-        return await this.dbHandler.run(query, [ItemName, Price, Quantity, IsAvailable, ItemID]);
+        return await this.dbHandler.run(query, [ItemName, Price, Quantity, QuantityType, ItemID]);
     }
 
     // Optional: Check if a menu item exists

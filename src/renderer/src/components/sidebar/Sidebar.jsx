@@ -11,7 +11,7 @@ import { Link } from 'react-router';
 const Sidebar = () => {
   return (
     <div className="bg-gray-800 text-white w-64 p-6 h-screen">
-        <h1 className="text-2xl font-bold mb-6">Billing System</h1>
+        <h1 className="text-2xl font-bold mb-6">Hungover Foods</h1>
         <div className="space-y-4">
           <Link to="/home" className="flex items-center space-x-2">
             <Home size={20} />

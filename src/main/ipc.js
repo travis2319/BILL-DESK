@@ -84,13 +84,13 @@ export const handleIPC = (dbHandler) => {
     }
   })
 
-  ipcMain.handle('menu-create', async(_,ItemName,Price,Quantity,Status)=>{
+  ipcMain.handle('menu-create', async(_,ItemName,Price,Quantity,QuantityType)=>{
     try{
 
-      console.log(ItemName,Price,Quantity,Status);
+      console.log(ItemName,Price,Quantity,QuantityType);
        await menu.createTable();
        
-       await menu.createMenu(ItemName, Price, Quantity, Status);
+       await menu.createMenu(ItemName, Price, Quantity, QuantityType);
        return {success:true,message: 'Items was added successfully'}
     }catch(err){
       return {success:false,error:err||err}

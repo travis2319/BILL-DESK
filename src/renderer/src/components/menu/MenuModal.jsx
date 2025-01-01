@@ -1,27 +1,28 @@
 import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 
+const predefinedTypes = ['kg', 'pieces', 'plate', 'bowl'];
+
 const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
   const [item, setItem] = useState({
     ItemName: '',
     Price: 0,
     Quantity: 1,
-    IsAvailable: true,
+    QuantityType: '',
   });
-
   const [isLoading, setIsLoading] = useState(false);
 
-  // Populate the form when editingItem is provided
   useEffect(() => {
     if (editingItem) {
+      console.log(editingItem)
       setItem({
         ItemName: editingItem.menuName || '',
         Price: editingItem.price || 0,
         Quantity: editingItem.quantity || 1,
-        IsAvailable: editingItem.isAvailable ?? true,
+        QuantityType: editingItem.quantityType || '',
       });
     } else {
-      resetForm(); // Reset if not editing
+      resetForm();
     }
   }, [editingItem]);
 
@@ -29,29 +30,26 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
     setIsLoading(true);
 
     try {
-      // Validate numeric inputs
       if (isNaN(item.Price) || isNaN(item.Quantity)) {
         alert('Please enter valid numeric values for price and quantity.');
         return;
       }
 
       if (editingItem) {
-        // Editing existing item
         await onEdit({
           menuId: editingItem.menuId,
           menuName: item.ItemName,
           price: item.Price,
           quantity: item.Quantity,
-          isAvailable: item.IsAvailable,
+          quantityType: item.QuantityType,
         });
       } else {
-        // Adding new item
-        const response = await window.electron.ipcRenderer.invoke('menu-create', item.ItemName, item.Price, item.Quantity, item.IsAvailable);
-        
+        const response = await window.electron.ipcRenderer.invoke('menu-create', item.ItemName, item.Price, item.Quantity, item.QuantityType);
+
         if (response.success) {
           onAdd({
             ...item,
-            ItemID: response.ItemID, // Assuming the backend returns the new item's ID
+            ItemID: response.ItemID,
           });
           resetForm();
         } else {
@@ -67,11 +65,11 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
   };
 
   const resetForm = () => {
-    setItem({ ItemName: '', Price: 0, Quantity: 1, IsAvailable: true });
+    setItem({ ItemName: '', Price: 100, Quantity: 1, QuantityType: '' });
   };
 
   const handleInputChange = (field, value) => {
-    setItem(prevItem => ({ ...prevItem, [field]: value }));
+    setItem((prevItem) => ({ ...prevItem, [field]: value }));
   };
 
   const handleClose = () => {
@@ -137,15 +135,23 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
           </div>
 
           <div>
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                checked={item.IsAvailable}
-                onChange={(e) => handleInputChange('IsAvailable', e.target.checked)}
-                className="form-checkbox h-5 w-5 text-blue-600"
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Quantity Type
+              <select
+                value={item.QuantityType}
+                onChange={(e) => handleInputChange('QuantityType', e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 disabled={isLoading}
-              />
-              <span className="ml-2 text-gray-700">Available</span>
+              >
+                <option value="" disabled>
+                  Select quantity type
+                </option>
+                {predefinedTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 
