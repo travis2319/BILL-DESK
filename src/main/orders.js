@@ -16,8 +16,10 @@ export class Orders {
         OrderTimestamp DATETIME NOT NULL,
         TotalAmount DECIMAL(10,2),
         SubTotal DECIMAL(10,2),
-        TaxAmount DECIMAL(10,2),
-        TaxRate DECIMAL(10,2),
+        cgstAmount DECIMAL(10,2),
+        sgstAmount DECIMAL(10,2),
+        sgstRate DECIMAL(10,2),
+        cgstRate DECIMAL(10,2),
         FOREIGN KEY (UserID) REFERENCES Users(UserID),
         FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId)
       );
@@ -36,12 +38,14 @@ export class Orders {
     orderTimestamp,
     totalAmount,
     subTotal,
-    taxAmount,
-    taxRate // Added taxRate parameter
+    cgstAmount,
+    sgstAmount,
+    cgstRate,
+    sgstRate
   ) {
     const insertOrderQuery = `
-      INSERT INTO Orders (UserID, CustomerId, OrderTimestamp, TotalAmount, SubTotal, TaxAmount, TaxRate)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO Orders (UserID, CustomerId, OrderTimestamp, TotalAmount, SubTotal, cgstAmount, sgstAmount, cgstRate, sgstRate)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     try {
@@ -52,8 +56,10 @@ export class Orders {
         orderTimestamp,
         totalAmount,
         subTotal,
-        taxAmount,
-        taxRate // Correctly passing taxRate
+        cgstAmount,
+        sgstAmount,
+        cgstRate,
+        sgstRate // Fixed variable name from sgstRates to sgstRate
       ]);
 
       // Fetch the last inserted order ID
@@ -93,7 +99,10 @@ export class Orders {
         o.OrderTimestamp, 
         o.TotalAmount, 
         o.SubTotal, 
-        o.TaxAmount, 
+         o.cgstAmount,
+        o.sgstAmount,
+        o.cgstRate,
+        o.sgstRate,
         group_concat(oi.ItemName, ', ') AS ItemNames,
         group_concat(oi.Quantity, ', ') AS Quantities
       FROM Orders o
@@ -117,7 +126,10 @@ export class Orders {
         o.OrderTimestamp,
         o.TotalAmount,
         o.SubTotal,
-        o.TaxRate,
+        o.cgstAmount,
+        o.sgstAmount,
+        o.cgstRate,
+        o.sgstRate,
         c.CustomerName,
         c.Email AS CustomerEmail,
         c.PhoneNumber,
@@ -140,15 +152,18 @@ export class Orders {
           TimeStamp: rows[0].OrderTimestamp,
           TotalAmount: rows[0].TotalAmount,
           SubTotal: rows[0].SubTotal,
-          TaxRate: rows[0].TaxRate,
-          CustomerName: rows[0].CustomerName,
-          Email: rows[0].CustomerEmail,
-          PhoneNumber: rows[0].PhoneNumber,
+          cgstAmount: rows[0].cgstAmount || 0.00, // Default value if not found
+          sgstAmount: rows[0].sgstAmount || 0.00, // Default value if not found
+          CustomerName: rows[0].CustomerName || 'N/A', // Handle missing customer names gracefully
+          Email: rows[0].CustomerEmail || 'N/A', // Handle missing email gracefully
+          PhoneNumber: rows[0].PhoneNumber || 'N/A', // Handle missing phone number gracefully
           Items: rows.map(row => ({
             ItemName: row.ItemName || 'N/A', // Handle missing item names gracefully
             ItemPrice: row.ItemPrice || 0.00, // Default price if not found
             Quantity: row.Quantity || 0 // Default quantity if not found
           })),
+          cgstRate: rows[0].cgstRate || 0.00, // Default rate if not found
+          sgstRate: rows[0].sgstRate || 0.00 // Default rate if not found
         };
 
         return orderDetails; // Return structured order details

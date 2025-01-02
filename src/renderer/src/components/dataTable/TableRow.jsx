@@ -13,9 +13,10 @@ const TableRow = ({ order, selectedOrders, handleSelect, handleGeneratePDF }) =>
       <td className="px-4 py-3 text-black dark:text-black">{order.PhoneNumber}</td>
       <td className="px-4 py-3 truncate max-w-[120px] text-black dark:text-black">{order.Email}</td>
       <td className="px-4 py-3 text-black dark:text-black">{order.OrderTimestamp}</td>
-      <td className="px-4 py-3 font-semibold text-black dark:text-black">{order.TotalAmount.toFixed(2)}</td>
+      <td className="px-4 py-3 font-bold text-green-800 dark:text-green-800">{order.TotalAmount.toFixed(2)}</td>
       <td className="px-4 py-3 text-black dark:text-black">{order.SubTotal.toFixed(2)}</td>
-      <td className="px-4 py-3 text-black dark:text-black">{order.TaxAmount.toFixed(2)}</td>
+      <td className="px-4 py-3 text-black dark:text-black">{order.cgstAmount + order.sgstAmount}</td>
+      <td className="px-4 py-3 text-black dark:text-black">{order.cgstRate + order.sgstRate }%</td>
       <td className="px-4 py-3 text-black dark:text-black">{order.ItemNames}</td>
       <td className="px-4 py-3 text-black dark:text-black">{order.Quantities}</td>
       <td className="px-4 py-3 text-center">

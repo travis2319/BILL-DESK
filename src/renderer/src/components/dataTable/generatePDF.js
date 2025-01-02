@@ -91,10 +91,10 @@ export const generatePDF = async (order) => {
   const subtotal = order.Items.reduce((total, item) => total + (item.ItemPrice * item.Quantity), 0);
   
   // Calculate GST using taxRate from order
-  const gstAmount = subtotal * (order.TaxRate / 100);
-
+  const sgstAmount = subtotal * (order.sgstRate / 100);
+  const cgstAmount = subtotal * (order.cgstRate / 100);
   // Calculate total amount
-  const totalAmount = subtotal + gstAmount;
+  const totalAmount = subtotal + sgstAmount + cgstAmount;
 
   // Update autoTable to include item price
   doc.autoTable({
@@ -121,23 +121,24 @@ export const generatePDF = async (order) => {
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("Summary", leftMargin, totalsY);
-
+  
   doc.setFont("helvetica", "normal");
   const summaryStartY = totalsY + 8;
   
   // Displaying totals with proper formatting
   doc.text(`Sub Total: ${subtotal.toFixed(2)}`, rightMargin, summaryStartY, { align: "right" });
-  doc.text(`GST (${order.TaxRate}%): ${gstAmount.toFixed(2)}`, rightMargin, summaryStartY + 5, { align: "right" });
+  doc.text(`CGST (${order.cgstRate}%): ${cgstAmount.toFixed(2)}`, rightMargin, summaryStartY + 5, { align: "right" });
+  doc.text(`SGST (${order.sgstRate}%): ${sgstAmount.toFixed(2)}`, rightMargin, summaryStartY + 10, { align: "right" });
   
   doc.setFont("helvetica", "bold");
-  doc.text(`Total Amount: ${totalAmount.toFixed(2)}`, rightMargin, summaryStartY + 15, { align: "right" });
-
+  doc.text(`Total Amount: ${totalAmount.toFixed(2)}`, rightMargin, summaryStartY + 20, { align: "right" });
+  
   // Footer Section
   const footerY = doc.internal.pageSize.height - 15;
   doc.setFontSize(10);
   doc.setFont("helvetica", "italic");
   doc.text("Thank you for your business!", centerX, footerY, { align: "center" });
-
+  
   // Save the PDF
   try {
     await doc.save(`invoice_${order.OrderID}.pdf`);

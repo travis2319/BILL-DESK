@@ -22,6 +22,7 @@ const DataTable = () => {
       try {
         const response = await window.electron.ipcRenderer.invoke("order-get-All");
         if (response.success && response.orders) {
+          // console.log(response.orders);
           setOrders(response.orders);
         } else {
           setError(response.error || "Failed to fetch orders");
@@ -71,6 +72,8 @@ const DataTable = () => {
     try {
       const response = await window.electron.ipcRenderer.invoke("order-get-ById", orderId);
       if (response.success && response.order) {
+        console.log(response.order);
+        
         await generatePDF(response.order);
       } else {
         console.error(`Failed to generate PDF for Order ${orderId}: ${response.error}`);

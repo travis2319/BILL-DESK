@@ -150,8 +150,10 @@ export const handleIPC = (dbHandler) => {
       orderTimestamp,
       totalAmount,
       subTotal,
-      taxAmount,
-      taxRate,
+      cgstAmount,
+      sgstAmount,
+      cgstRate,
+      sgstRate,
       items
     ) => {
       try {
@@ -174,8 +176,10 @@ export const handleIPC = (dbHandler) => {
           orderTimestamp,
           totalAmount,
           subTotal,
-          taxAmount,
-          taxRate
+          cgstAmount,
+          sgstAmount,
+          cgstRate,
+          sgstRate
         );
   
         // Create order items using OrderItems class
