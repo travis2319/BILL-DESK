@@ -13,6 +13,7 @@ const MenuTable = () => {
     try {
       const response = await window.electron.ipcRenderer.invoke("get-all-menu");
       if (response.success) {
+        console.log(response);
         setMenus(response.MenuItems);
         setError(null);
       } else {
@@ -97,6 +98,7 @@ const MenuTable = () => {
 
   const handleEditSubmit = async (editedFields) => {
     const { menuId } = editingItem;
+    console.log(editedFields + "in hadleeditsubmit");
     
     try {
       // Update each field individually
@@ -146,10 +148,11 @@ const MenuTable = () => {
       );
     }
 
-    return menus.map((menu) => (
+    return menus.map((menu,index) => (
       <tr key={menu.ItemID} className="bg-blue-200 hover:bg-blue-300">
         <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-dark-800 dark:text-dark-800">
-          {menu.ItemID}
+          {/* {menu.ItemID} */}
+          {index+1}
         </td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-800 dark:text-dark-800">
           {menu.ItemName}
@@ -208,7 +211,7 @@ const MenuTable = () => {
               <thead>
                 <tr className="bg-blue-900">
                   <th scope="col" className="px-6 py-3 text-left text-sm font-bold text-white uppercase">
-                    Menu ID
+                    Sr. No.
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-sm font-bold text-white uppercase">
                     Name

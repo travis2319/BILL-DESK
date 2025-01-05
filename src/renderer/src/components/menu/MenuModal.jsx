@@ -14,8 +14,9 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
 
   useEffect(() => {
     if (editingItem) {
-      console.log(editingItem)
+      console.log('Editing item:', editingItem); // Debug log for editing item
       setItem({
+        // ItemID: editingItem.ItemID,
         ItemName: editingItem.menuName || '',
         Price: editingItem.price || 0,
         Quantity: editingItem.quantity || 1,
@@ -28,17 +29,19 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-
+    
     try {
-      if (isNaN(item.Price) || isNaN(item.Quantity)) {
-        alert('Please enter valid numeric values for price and quantity.');
+      console.log('Submitting item:', item); // Debug log for item being submitted
+
+      if (isNaN(item.Price) || item.Price < 0 || isNaN(item.Quantity) || item.Quantity < 1) {
+        alert('Please enter valid numeric values for price (>= 0) and quantity (>= 1).');
         return;
       }
 
       if (editingItem) {
         await onEdit({
-          menuId: editingItem.menuId,
-          menuName: item.ItemName,
+          ItemID: editingItem.ItemID,
+          ItemName: item.ItemName,
           price: item.Price,
           quantity: item.Quantity,
           quantityType: item.QuantityType,
@@ -65,10 +68,12 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
   };
 
   const resetForm = () => {
-    setItem({ ItemName: '', Price: 100, Quantity: 1, QuantityType: '' });
+    console.log('Resetting form'); // Debug log for resetting form
+    setItem({ ItemName: '', Price: 0, Quantity: 1, QuantityType: '' });
   };
 
   const handleInputChange = (field, value) => {
+    console.log(`Changing ${field} to ${value}`); // Debug log for input changes
     setItem((prevItem) => ({ ...prevItem, [field]: value }));
   };
 
@@ -99,6 +104,7 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Enter item name"
                 disabled={isLoading}
+                aria-label="Item Name"
               />
             </label>
           </div>
@@ -109,12 +115,13 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
               <input
                 type="number"
                 value={item.Price}
-                onChange={(e) => handleInputChange('Price', parseFloat(e.target.value))}
+                onChange={(e) => handleInputChange('Price', Math.max(0, parseFloat(e.target.value)))}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Enter price"
                 min="0"
                 step="0.01"
                 disabled={isLoading}
+                aria-label="Price"
               />
             </label>
           </div>
@@ -125,11 +132,12 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
               <input
                 type="number"
                 value={item.Quantity}
-                onChange={(e) => handleInputChange('Quantity', parseInt(e.target.value))}
+                onChange={(e) => handleInputChange('Quantity', Math.max(1, parseInt(e.target.value)))}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Enter quantity"
-                min="0"
+                min="1"
                 disabled={isLoading}
+                aria-label="Quantity"
               />
             </label>
           </div>
@@ -142,10 +150,9 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
                 onChange={(e) => handleInputChange('QuantityType', e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 disabled={isLoading}
+                aria-label="Quantity Type"
               >
-                <option value="" disabled>
-                  Select quantity type
-                </option>
+                <option value="" disabled>Select quantity type</option>
                 {predefinedTypes.map((type) => (
                   <option key={type} value={type}>
                     {type}
@@ -158,7 +165,7 @@ const MenuModal = ({ isOpen, onClose, onAdd, onEdit, editingItem }) => {
           <div className="flex space-x-4">
             <button
               onClick={handleSubmit}
-              className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`flex-1 px-4 py-2 ${isLoading ? 'bg-gray-400' : 'bg-blue-500'} text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
               disabled={isLoading}
             >
               {isLoading ? (editingItem ? 'Saving...' : 'Adding...') : (editingItem ? 'Save Changes' : 'Add Item')}
