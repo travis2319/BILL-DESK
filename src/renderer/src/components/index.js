@@ -4,6 +4,7 @@ import Register from './auth/Register'
 import Dashboard from './dashboard/Dashboard'
 import DataTable from './dataTable/DataTable'
 import MenuTable from './menu/MenuTable'
+import Forget from './auth/Forget'
 
 export{
     Sidebar,
@@ -11,5 +12,6 @@ export{
     Login,
     Register,
     DataTable,
-    MenuTable
+    MenuTable,
+    Forget
 }

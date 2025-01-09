@@ -59,13 +59,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-300">
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gray-200">
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-center mb-8">Login</h1>
+        {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
         <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-black">
+          <div className="mb-6">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -79,7 +79,7 @@ const Login = () => {
             />
           </div>
           <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-black">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <input
@@ -102,7 +102,12 @@ const Login = () => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <p className="mt-4 text-sm text-center text-gray-600">
+        <p className="mt-6 text-sm text-center text-gray-600">
+          <Link to="/forgot" className="text-blue-500 hover:underline">
+            Forgot your password?
+          </Link>
+        </p>
+        <p className="mt-6 text-sm text-center text-gray-600">
           Don't have an account?{' '}
           <Link to="/register" className="text-blue-500 hover:underline">
             Sign up

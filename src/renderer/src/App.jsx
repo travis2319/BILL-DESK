@@ -4,7 +4,7 @@ import Home from './pages/Home.jsx';
 import Logs from "./pages/Logs.jsx";
 import MenuItems from "./pages/MenuItems.jsx";
 // import Settings from "./pages/Settings.jsx";
-import {Login,Register} from './components/index.js'
+import {Login,Register,Forget} from './components/index.js'
 
 const App = () => {
   
@@ -13,6 +13,7 @@ const App = () => {
       <Routes>
          <Route path='/' element={<Login/>}/>
          <Route path='/register' element={<Register/>}/>
+         <Route path="/forgot" element={<Forget/>} />
          <Route path="/home" element={<Home/>} />
          <Route path="/logs" element={<Logs />} />
          <Route path="/menu" element={<MenuItems />} />

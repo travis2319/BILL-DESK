@@ -43,4 +43,16 @@ export class Auth {
     const query = 'SELECT * FROM Users';
     return await this.dbHandler.all(query);
   }
+
+  async checkUserExists(email) {
+    const query = 'SELECT * FROM Users WHERE email = ?';
+    const user = await this.dbHandler.get(query, [email]);
+    return !!user;
+  }
+
+  async updateUserPassword(email, newPassword) {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const query = 'UPDATE Users SET password = ? WHERE email = ?';
+    await this.dbHandler.run(query, [hashedPassword, email]);
+  }
 }

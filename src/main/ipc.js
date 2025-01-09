@@ -33,6 +33,23 @@ export const handleIPC = (dbHandler) => {
     }
   });
 
+  ipcMain.handle('check-user-exists', async (_, email) => {
+    try{
+      return {success:true,exists: await auth.checkUserExists(email)}
+    }catch(err){
+      return {success:false,error:err}
+    }
+});
+
+ipcMain.handle('update-password', async (_, { email, newPassword }) => {
+  try {
+      await auth.updateUserPassword(email, newPassword);
+      return { success: true };
+  } catch (error) {
+      return { success: false, error: error.message };
+  }
+});
+
   ipcMain.handle('auth-get-user', async (_, email, password) => {
     try {
       const user = await auth.getUserByEmailAndPassword(email, password);
