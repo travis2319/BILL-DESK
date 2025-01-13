@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Forget = () => {
     const [email, setEmail] = useState('');
@@ -32,7 +33,6 @@ const Forget = () => {
         if (step === 1 && email.trim() !== '') {
             try {
                 const response = await window.electron.ipcRenderer.invoke('check-user-exists', email);
-                console.log(response);
                 if (response.exists) {
                     setStep(2);
                     setEmailError('');
@@ -41,7 +41,6 @@ const Forget = () => {
                 }
             } catch (error) {
                 setEmailError('Error checking email. Please try again.');
-                console.error('Email check error:', error);
             }
         } else if (step === 2 && newPassword.trim() !== '') {
             setStep(3);
@@ -63,18 +62,14 @@ const Forget = () => {
         }
 
         try {
-            const response = await window.electron.ipcRenderer.invoke('update-password', { 
-                email, 
-                newPassword 
+            const response = await window.electron.ipcRenderer.invoke('update-password', {
+                email,
+                newPassword,
             });
-            
+
             if (response.success) {
                 setIsSuccess(true);
-                setMessage('Password updated successfully! Redirecting to login page...');
-                setTimeout(() => {
-                    // Add navigation logic here - replace with your actual navigation code
-                    window.location.href = '/login';
-                }, 2000);
+                setMessage('Password updated successfully! Click the button below to log in.');
             } else {
                 setIsSuccess(false);
                 setMessage(response.error || 'Failed to update password. Please try again.');
@@ -82,7 +77,6 @@ const Forget = () => {
         } catch (error) {
             setIsSuccess(false);
             setMessage('Error updating password. Please try again.');
-            console.error('Password update error:', error);
         }
     };
 
@@ -162,20 +156,31 @@ const Forget = () => {
                                 >
                                     Back
                                 </button>
-                                <button
-                                    type="submit"
-                                    className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                >
-                                    Submit
-                                </button>
+                                {!isSuccess ? (
+                                    <button
+                                        type="submit"
+                                        className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
+                                    >
+                                        Submit
+                                    </button>
+                                ) : (
+                                    <Link
+                                        to="/"
+                                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
+                                    >
+                                        Go to Login
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     )}
                 </form>
                 {message && (
-                    <p className={`mt-4 text-center font-medium ${isSuccess ? 'text-green-800' : 'text-red-500'}`}>
-                        {message}
-                    </p>
+                    <div className="mt-4 text-center">
+                        <p className={`font-medium ${isSuccess ? 'text-green-800' : 'text-red-500'}`}>
+                            {message}
+                        </p>
+                    </div>
                 )}
             </div>
         </div>
