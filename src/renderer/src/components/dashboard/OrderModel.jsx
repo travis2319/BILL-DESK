@@ -12,6 +12,8 @@ const OrderModal = ({ isOpen, onClose }) => {
     const [currentItemQuantity, setCurrentItemQuantity] = useState(1);
     const [cgstRate, setCgstRate] = useState(2.5); // CGST Rate
     const [sgstRate, setSgstRate] = useState(2.5); // SGST Rate
+    const [message, setMessage] = useState('');
+
 
     useEffect(() => {
         const fetchMenuItems = async () => {
@@ -75,13 +77,26 @@ const OrderModal = ({ isOpen, onClose }) => {
     };
 
     const handleSubmit = async () => {
+        if (!email) {
+            setMessage('EMAIL is required');
+            return;
+        }
+
+        if (items.length === 0) {
+            setMessage('Please add at least one item to the order');
+            return;
+        }
+
+        const sanitizedPhoneNumber = phoneNumber || '';
+        const sanitizedcustomerName = customerName || '';
+
         const subtotal = items.reduce((total, item) => total + item.price, 0);
         const cgstAmount = subtotal * (cgstRate / 100);
         const sgstAmount = subtotal * (sgstRate / 100);
 
         const orderData = {
-            customerName,
-            phoneNumber,
+            customerName: sanitizedcustomerName,
+            phoneNumber: sanitizedPhoneNumber,
             email,
             items,
             orderTimestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
@@ -111,15 +126,15 @@ const OrderModal = ({ isOpen, onClose }) => {
                 orderData.items
             );
             if (result.success) {
-                alert(result.message);
+                setMessage(result.message);
                 resetForm(); // Reset form on successful order submission
                 onClose();
             } else {
-                alert('Failed to create order');
+                setMessage('Failed to create order');
             }
         } catch (error) {
             console.error('Error submitting order:', error);
-            alert('Error submitting order');
+            setMessage('Error submitting order');
         }
     };
 
@@ -144,10 +159,17 @@ const OrderModal = ({ isOpen, onClose }) => {
         <Modal isOpen={isOpen} onRequestClose={handleClose} ariaHideApp={false}>
             <div className="p-6 bg-gray-100 rounded-xl shadow-md">
                 <h2 className="text-2xl font-bold mb-4">Create Order</h2>
-                <div className="mb-4 flex flex-wrap lg:flex-nowrap space-x-4">
+                {/* Display message here */}
+                {message && (
+                    <div className="mb-4 text-red-700 text-center">
+                        {message}
+                        {/* {setTimeout(() => setMessage(''), 10000)} */}
+                    </div>
+                )}
+                <div className="mb-4 flex flex-wrap lg:flex-nowrap space-x-4 justify-center">
                     <label className="block text-sm font-medium text-gray-700 lg:w-1/3 w-full">
                         Customer Name:
-                        <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+                        <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required />
                     </label>
                     <label className="block text-sm font-medium text-gray-700 lg:w-1/3 w-full">
                         Phone Number:
@@ -158,9 +180,9 @@ const OrderModal = ({ isOpen, onClose }) => {
                         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                     </label>
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 text-center">
                     <label className="block text-sm font-medium text-gray-700">Add Item:</label>
-                    <div className="flex space-x-2 items-center">
+                    <div className="flex space-x-2 items-center justify-center">
                         <select value={selectedMenuItem} onChange={(e) => setSelectedMenuItem(e.target.value)} className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             {menuItems.map((item, index) => (
                                 <option key={index} value={item.ItemName}>{item.ItemName}</option>
@@ -170,12 +192,12 @@ const OrderModal = ({ isOpen, onClose }) => {
                         <button onClick={handleAddItem} className="mt-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Add Item</button>
                     </div>
                 </div>
-                <table className="w-full mb-4 border">
+                <table className="w-full mb-4 border text-center">
                     <thead>
                         <tr className="bg-gray-200">
-                            <th className="px-4 py-2 text-left">Item Name</th>
-                            <th className="px-4 py-2 text-left">Quantity</th>
-                            <th className="px-4 py-2 text-left">Price</th>
+                            <th className="px-4 py-2">Item Name</th>
+                            <th className="px-4 py-2">Quantity</th>
+                            <th className="px-4 py-2">Price</th>
                             <th className="px-4 py-2">Actions</th>
                         </tr>
                     </thead>
@@ -185,15 +207,13 @@ const OrderModal = ({ isOpen, onClose }) => {
                                 <td className="px-4 py-2">{item.name}</td>
                                 <td className="px-4 py-2">{item.quantity} {item.displayQuantity}</td>
                                 <td className="px-4 py-2">{item.price.toFixed(2)}</td>
-                                <td className="px-4 py-2 text-center">
+                                <td className="px-4 py-2">
                                     <button onClick={() => handleDeleteItem(index)} className="px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Delete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-
-                {/* Tax Input and Total Display */}
                 <div className="flex justify-between items-start w-full">
                     {/* Left side tax inputs */}
                     <div className="flex gap-x-4 mb-4">
