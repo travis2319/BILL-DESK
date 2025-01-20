@@ -87,7 +87,7 @@ const OrderModal = ({ isOpen, onClose }) => {
             return;
         }
 
-        const sanitizedPhoneNumber = phoneNumber || '';
+        const sanitizedemail = email || '';
         const sanitizedcustomerName = customerName || '';
 
         const subtotal = items.reduce((total, item) => total + item.price, 0);
@@ -96,8 +96,8 @@ const OrderModal = ({ isOpen, onClose }) => {
 
         const orderData = {
             customerName: sanitizedcustomerName,
-            phoneNumber: sanitizedPhoneNumber,
-            email,
+            phoneNumber,
+            email: sanitizedemail,
             items,
             orderTimestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
             userID: 1,
@@ -128,7 +128,7 @@ const OrderModal = ({ isOpen, onClose }) => {
             if (result.success) {
                 setMessage(result.message);
                 resetForm(); // Reset form on successful order submission
-                onClose();
+                // onClose();
             } else {
                 setMessage('Failed to create order');
             }
@@ -169,7 +169,7 @@ const OrderModal = ({ isOpen, onClose }) => {
                 <div className="mb-4 flex flex-wrap lg:flex-nowrap space-x-4 justify-center">
                     <label className="block text-sm font-medium text-gray-700 lg:w-1/3 w-full">
                         Customer Name:
-                        <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required />
+                        <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
                     </label>
                     <label className="block text-sm font-medium text-gray-700 lg:w-1/3 w-full">
                         Phone Number:

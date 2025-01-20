@@ -12,8 +12,8 @@ export class Customer {
       CREATE TABLE IF NOT EXISTS Customers (
         CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
         CustomerName TEXT ,
-        PhoneNumber TEXT,
-        Email TEXT UNIQUE NOT NULL
+        PhoneNumber TEXT UNIQUE NOT NULL,
+        Email TEXT
       );
     `;
     await this.dbHandler.run(query);
@@ -36,9 +36,9 @@ export class Customer {
   }
 
   // Get a customer by email
-  async getCustomerByEmail(email) {
-    const query = `SELECT CustomerID FROM Customers WHERE Email = ?`;
-     const result = await this.dbHandler.get(query, [email]); // Use `get` to fetch a single row
+  async getCustomerByPhone(phoneNumber) {
+    const query = `SELECT CustomerID FROM Customers WHERE PhoneNumber = ?`;
+     const result = await this.dbHandler.get(query, [phoneNumber]); // Use `get` to fetch a single row
      return result ? result.CustomerID : null;
   }
 }

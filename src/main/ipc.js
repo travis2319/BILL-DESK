@@ -180,10 +180,10 @@ ipcMain.handle('update-password', async (_, { email, newPassword }) => {
         }
   
         // Check or create customer
-        let customerID = await customer.getCustomerByEmail(email);
+        let customerID = await customer.getCustomerByPhone(phoneNumber);
         if (!customerID) {
           customerID = await customer.addCustomer(customerName, phoneNumber, email);
-          customerID = await customer.getCustomerByEmail(email);
+          customerID = await customer.getCustomerByPhone(phoneNumber);
         }
   
         // Create order and get the order ID
