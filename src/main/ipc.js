@@ -159,69 +159,50 @@ ipcMain.handle('update-password', async (_, { email, newPassword }) => {
   });
 
 
-  ipcMain.handle('handle-order', async (_, 
-    customerName, 
-    phoneNumber, 
-    email, 
-    userID, 
-    orderTimestamp, 
-    totalAmount, 
-    subTotal, 
-    cgstAmount, 
-    sgstAmount, 
-    cgstRate, 
-    sgstRate, 
-    items
-  ) => {
+  ipcMain.handle('handle-order', async (_, orderData) => {
     try {
-      // Ensure the items array is not empty
-      if (items.length === 0) {
-        return { success: false, message: "Order must include at least one item." };
-      }
-      
-      // Check if the customer exists
-      let existingCustomer = await customer.getCustomerByPhone(phoneNumber);
-      let customerID;
-      
-      if (existingCustomer) {
-        customerID = existingCustomer.CustomerID; // Extract the correct ID
-      
-        // Check if name or email needs to be updated
-        if (
-          (customerName && existingCustomer.CustomerName !== customerName) || 
-          (email && existingCustomer.Email !== email)
-        ) {
-          await customer.updateCustomer(phoneNumber, customerName || existingCustomer.CustomerName, email || existingCustomer.Email);
-        }
-      } else {
-        // If customer doesn't exist, create a new one
-        customerID = await customer.addCustomer(customerName, phoneNumber, email);
-        const newCustomer = await customer.getCustomerByPhone(phoneNumber);
-        customerID = newCustomer.CustomerID;
-      }
-  
-      // Create order and get the order ID
-      const orderID = await orders.createOrder(
-        userID,
-        customerID,
-        orderTimestamp,
-        totalAmount,
-        subTotal,
-        cgstAmount,
-        sgstAmount,
-        cgstRate,
-        sgstRate
-      );
-  
-      // Create order items using OrderItems class
-      await orderItems.createOrderItems(orderID, items);
-  
-      return { success: true, message: "Order created successfully" };
-    } catch (err) {
-      console.error("Error handling order:", err);
-      return { success: false, error: err.message || err };
+        const {
+            customerName,
+            phoneNumber,
+            email,
+            userID,
+            orderTimestamp,
+            totalAmount,
+            subTotal,
+            cgstAmount,
+            sgstAmount,
+            cgstRate,
+            sgstRate,
+            items
+        } = orderData;
+
+        console.log('Received order details:', orderData);
+
+        // Create order and get the order ID
+        const orderID = await orders.createOrder(
+            userID,
+            customerName,
+            phoneNumber,
+            email,
+            orderTimestamp,
+            totalAmount,
+            subTotal,
+            cgstAmount,
+            sgstAmount,
+            cgstRate,
+            sgstRate
+        );
+        console.log('Order created with ID:', orderID);
+
+        // Create order items using OrderItems class
+        await orderItems.createOrderItems(orderID, items);
+
+        return { success: true, message: 'Order created successfully' };
+    } catch (error) {
+        console.error('Error handling order:', error);
+        return { success: false, message: error.message };
     }
-  });
+});
   
   
   ipcMain.handle('get-analytics', async () => {

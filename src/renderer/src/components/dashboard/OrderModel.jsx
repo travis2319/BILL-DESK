@@ -81,19 +81,20 @@ const OrderModal = ({ isOpen, onClose }) => {
             setMessage('Phone Number is required');
             return;
         }
-
+    
         if (items.length === 0) {
             setMessage('Please add at least one item to the order');
             return;
         }
-
+        console.log(items);
+    
         const sanitizedemail = email || '';
         const sanitizedcustomerName = customerName || '';
-
+    
         const subtotal = items.reduce((total, item) => total + item.price, 0);
         const cgstAmount = subtotal * (cgstRate / 100);
         const sgstAmount = subtotal * (sgstRate / 100);
-
+    
         const orderData = {
             customerName: sanitizedcustomerName,
             phoneNumber,
@@ -106,25 +107,14 @@ const OrderModal = ({ isOpen, onClose }) => {
             cgstAmount,
             sgstAmount,
             cgstRate,
-            sgstRate,
+            sgstRate
         };
-
+        console.log('Order Data:', orderData);
+    
         try {
-            const result = await window.electron.ipcRenderer.invoke(
-                'handle-order',
-                orderData.customerName,
-                orderData.phoneNumber,
-                orderData.email,
-                orderData.userID,
-                orderData.orderTimestamp,
-                orderData.totalAmount,
-                orderData.subTotal,
-                orderData.cgstAmount,
-                orderData.sgstAmount,
-                orderData.cgstRate,
-                orderData.sgstRate,
-                orderData.items
-            );
+            // Send the entire orderData object instead of individual parameters
+            const result = await window.electron.ipcRenderer.invoke('handle-order', orderData);
+            
             if (result.success) {
                 setMessage(result.message);
                 resetForm(); // Reset form on successful order submission
