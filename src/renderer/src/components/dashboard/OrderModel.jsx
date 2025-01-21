@@ -77,8 +77,8 @@ const OrderModal = ({ isOpen, onClose }) => {
     };
 
     const handleSubmit = async () => {
-        if (!email) {
-            setMessage('EMAIL is required');
+        if (!phoneNumber) {
+            setMessage('Phone Number is required');
             return;
         }
 
